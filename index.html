@@ -740,8 +740,8 @@
   </div>
 
   <script>
-    const folderName = "구매관련";
-    const folderPath = (name) => `./${folderName}/${name}`;
+    const folderName = "구매관련".normalize("NFC");
+    const folderPath = (name) => `./${folderName}/${name.normalize("NFC")}`;
 
     const files = {
       quoteMailThread: {
