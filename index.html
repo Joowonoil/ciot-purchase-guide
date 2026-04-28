@@ -5,21 +5,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>CIOT 구매방법정리</title>
   <link rel="icon" href="data:,">
+  <script>
+    (() => {
+      try {
+        const savedTheme = localStorage.getItem("ciot-theme");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        if (savedTheme === "dark" || (!savedTheme && prefersDark)) {
+          document.documentElement.dataset.theme = "dark";
+        }
+      } catch {
+        // Keep the default light theme if browser storage is unavailable.
+      }
+    })();
+  </script>
   <style>
     :root {
       --bg: #f3f5f2;
+      --page-top: #f6f8f6;
       --surface: #ffffff;
       --surface-alt: #ebf1ec;
+      --subtle-surface: #fcfdfc;
+      --template-bg: #f4f7f4;
       --line: #d7ded8;
       --text: #1f2520;
       --muted: #566158;
       --accent: #1f6b52;
+      --accent-hover: #195640;
       --accent-soft: #dcefe5;
+      --accent-badge: rgba(31, 107, 82, 0.1);
+      --button-on-accent: #ffffff;
       --warn: #8a6a17;
       --warn-soft: #f5edd1;
+      --warn-text: #5c4710;
       --danger: #8c3f2e;
       --danger-soft: #f8e4de;
+      --danger-text: #6d2f22;
+      --modal-backdrop: rgba(21, 29, 23, 0.62);
+      --iframe-bg: #eef2ef;
       --shadow: 0 14px 32px rgba(31, 37, 32, 0.08);
+      color-scheme: light;
+    }
+
+    :root[data-theme="dark"] {
+      --bg: #101611;
+      --page-top: #151d17;
+      --surface: #18211b;
+      --surface-alt: #223026;
+      --subtle-surface: #1b261f;
+      --template-bg: #142019;
+      --line: #334238;
+      --text: #edf3ee;
+      --muted: #afbbb1;
+      --accent: #7ac7a6;
+      --accent-hover: #8bd5b5;
+      --accent-soft: #213d31;
+      --accent-badge: rgba(122, 199, 166, 0.16);
+      --button-on-accent: #0f1712;
+      --warn: #e6c96d;
+      --warn-soft: #3a321c;
+      --warn-text: #f3df9a;
+      --danger: #ef9d87;
+      --danger-soft: #3c241f;
+      --danger-text: #f1b2a2;
+      --modal-backdrop: rgba(0, 0, 0, 0.72);
+      --iframe-bg: #111812;
+      --shadow: 0 18px 40px rgba(0, 0, 0, 0.32);
+      color-scheme: dark;
     }
 
     * {
@@ -34,7 +85,7 @@
       margin: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Noto Sans KR", "Segoe UI", sans-serif;
       color: var(--text);
-      background: linear-gradient(180deg, #f6f8f6 0%, var(--bg) 100%);
+      background: linear-gradient(180deg, var(--page-top) 0%, var(--bg) 100%);
       line-height: 1.6;
     }
 
@@ -56,6 +107,13 @@
       box-shadow: var(--shadow);
     }
 
+    .intro-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
     .eyebrow {
       display: inline-flex;
       align-items: center;
@@ -66,6 +124,41 @@
       color: var(--accent);
       font-size: 13px;
       font-weight: 700;
+    }
+
+    .theme-toggle {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 0 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--surface-alt);
+      color: var(--text);
+      font: inherit;
+      font-size: 13px;
+      font-weight: 700;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+
+    .theme-toggle:hover {
+      border-color: var(--accent);
+    }
+
+    .theme-dot {
+      width: 14px;
+      height: 14px;
+      border: 2px solid var(--accent);
+      border-radius: 999px;
+      background: var(--surface);
+    }
+
+    :root[data-theme="dark"] .theme-dot {
+      background: var(--accent);
+      box-shadow: inset -4px 0 0 var(--surface-alt);
     }
 
     h1,
@@ -126,7 +219,7 @@
       padding: 18px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: #fcfdfc;
+      background: var(--subtle-surface);
     }
 
     .question-label {
@@ -239,12 +332,12 @@
     .link-button {
       background: var(--accent);
       border-color: var(--accent);
-      color: #ffffff;
+      color: var(--button-on-accent);
     }
 
     .link-button:hover {
-      background: #195640;
-      border-color: #195640;
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
     }
 
     .feedback-button {
@@ -301,7 +394,7 @@
       padding: 18px;
       border: 1px solid var(--line);
       border-radius: 8px;
-      background: #fcfdfc;
+      background: var(--subtle-surface);
     }
 
     .result-card h3 {
@@ -322,12 +415,12 @@
 
     .callout.warn {
       background: var(--warn-soft);
-      color: #5c4710;
+      color: var(--warn-text);
     }
 
     .callout.danger {
       background: var(--danger-soft);
-      color: #6d2f22;
+      color: var(--danger-text);
     }
 
     .list {
@@ -342,7 +435,7 @@
     .template-box {
       padding: 16px;
       border-radius: 8px;
-      background: #f4f7f4;
+      background: var(--template-bg);
       border: 1px solid var(--line);
       font-size: 15px;
       white-space: pre-line;
@@ -453,7 +546,7 @@
     .file-group-count {
       padding: 2px 8px;
       border-radius: 999px;
-      background: rgba(31, 107, 82, 0.1);
+      background: var(--accent-badge);
       color: var(--muted);
       font-size: 12px;
       font-weight: 700;
@@ -517,7 +610,7 @@
     .tab-count {
       padding: 2px 8px;
       border-radius: 999px;
-      background: rgba(31, 107, 82, 0.1);
+      background: var(--accent-badge);
       font-size: 12px;
       font-weight: 700;
     }
@@ -548,7 +641,7 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
-      background: rgba(21, 29, 23, 0.62);
+      background: var(--modal-backdrop);
     }
 
     .modal.is-open {
@@ -583,7 +676,7 @@
       width: 100%;
       height: 100%;
       border: 0;
-      background: #eef2ef;
+      background: var(--iframe-bg);
     }
 
     .sr-only {
@@ -623,13 +716,23 @@
         padding-left: 18px;
         padding-right: 18px;
       }
+
+      .intro-top {
+        align-items: flex-start;
+      }
     }
   </style>
 </head>
 <body>
   <main class="page">
     <section class="intro">
-      <div class="eyebrow">CIOT 구매방법정리</div>
+      <div class="intro-top">
+        <div class="eyebrow">CIOT 구매방법정리</div>
+        <button class="theme-toggle" id="theme-toggle" type="button" aria-pressed="false">
+          <span class="theme-dot" aria-hidden="true"></span>
+          <span id="theme-toggle-label">다크모드</span>
+        </button>
+      </div>
       <h1>CIOT 구매방법정리</h1>
       <p>
         먼저 구매 대상과 금액, 해외 여부만 고르면 됩니다. 결과에는 어떤 절차로 가야 하는지,
@@ -999,7 +1102,47 @@
     const previewTitle = document.getElementById("preview-title");
     const previewFrame = document.getElementById("preview-frame");
     const closePreview = document.getElementById("close-preview");
+    const themeToggle = document.getElementById("theme-toggle");
+    const themeToggleLabel = document.getElementById("theme-toggle-label");
     let lastPreviewTrigger = null;
+
+    function getSavedTheme() {
+      try {
+        return localStorage.getItem("ciot-theme");
+      } catch {
+        return "";
+      }
+    }
+
+    function saveTheme(theme) {
+      try {
+        localStorage.setItem("ciot-theme", theme);
+      } catch {
+        // The selected theme still applies for the current page load.
+      }
+    }
+
+    function getInitialTheme() {
+      const savedTheme = getSavedTheme();
+      if (savedTheme === "dark" || savedTheme === "light") {
+        return savedTheme;
+      }
+      return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+    }
+
+    function applyTheme(theme) {
+      document.documentElement.dataset.theme = theme;
+      const isDark = theme === "dark";
+      themeToggle.setAttribute("aria-pressed", String(isDark));
+      themeToggleLabel.textContent = isDark ? "라이트모드" : "다크모드";
+    }
+
+    function toggleTheme() {
+      const currentTheme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+      const nextTheme = currentTheme === "dark" ? "light" : "dark";
+      applyTheme(nextTheme);
+      saveTheme(nextTheme);
+    }
 
     function dedupe(list) {
       return [...new Set(list)];
@@ -1564,6 +1707,7 @@
     });
 
     resetButton.addEventListener("click", resetState);
+    themeToggle.addEventListener("click", toggleTheme);
     closePreview.addEventListener("click", closePreviewModal);
     previewModal.addEventListener("click", (event) => {
       if (event.target === previewModal) {
@@ -1584,6 +1728,7 @@
       }
     });
 
+    applyTheme(getInitialTheme());
     renderAmountQuestion();
     syncSelectionStyles();
     renderResult();
