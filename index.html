@@ -682,7 +682,7 @@
                 </button>
                 <button class="choice-button" data-group="overseas" data-value="overseas" type="button">
                   해외 구매
-                  <small>인보이스, 관세감면 여부까지 함께 확인</small>
+                  <small>인보이스, 관세 납부와 정산까지 함께 확인</small>
                 </button>
               </div>
             </section>
@@ -1160,6 +1160,37 @@
       `;
     }
 
+    function sectionDetailHtml(section) {
+      if (!section.detailItems && !section.detailFileGroup) {
+        return "";
+      }
+
+      const detailItemsHtml = section.detailItems
+        ? `<ul class="list">${section.detailItems.map((item) => `<li>${item}</li>`).join("")}</ul>`
+        : "";
+      const detailFileHtml = section.detailFileGroup
+        ? `
+          <div class="file-grid">
+            ${section.detailFileGroup.keys.map((fileKey) => fileCardHtml(fileKey, true)).join("")}
+          </div>
+        `
+        : "";
+      const count = (section.detailItems?.length || 0) + (section.detailFileGroup?.keys.length || 0);
+
+      return `
+        <details class="file-group">
+          <summary>
+            <span class="file-group-title">${section.detailTitle}</span>
+            <span class="file-group-count">${count}</span>
+          </summary>
+          <div class="file-group-body">
+            ${detailItemsHtml}
+            ${detailFileHtml}
+          </div>
+        </details>
+      `;
+    }
+
     function materialSmallRoute() {
       return {
         title: "재료 직접 구매 후 정산",
@@ -1253,33 +1284,21 @@
       return {
         steps: [
           "구매 후 인보이스를 확보합니다.",
-          "물품이 한국에 도착하면 국제 택배회사(세관)에서 메일을 보내고, 그 이후 관세감면신청서(학교(박상연 선생님)를 통해서 발급 가능)와 학술연구용 용도설명 및 확인서(학교(박상연 선생님)를 통해서 발급 가능), 사업자등록증을 회신합니다.",
-          "관세감면이 바로 승인되면 그 상태로 진행하고, 추가 추천서가 필요하다는 회신이 올 때만 다음 단계를 검토합니다.",
+          "물품이 한국에 도착하면 국제 택배회사(세관)에서 오는 관세 납부 안내 메일을 확인합니다.",
+          "현재는 관세감면은 받지 않고, 개인 계좌로 먼저 납부한 뒤 랩비로 페이백 받는 방식으로 처리합니다.",
           "해외 카드 결제 건이면 해외카드 매출내역서도 함께 챙깁니다."
         ],
         docs: [
           "인보이스",
-          "관세감면신청서(학교(박상연 선생님)를 통해서 발급 가능)",
-          "학술연구용 용도설명 및 확인서(학교(박상연 선생님)를 통해서 발급 가능)",
           "사업자등록증 사본",
           "해외카드 매출내역서",
-          "필요 시 국내제작 곤란물품 확인추천신청서 2부(학교(박상연 선생님)를 통해서 발급 가능)",
-          "필요 시 카탈로그(또는 이에 준하는 서류) 1부",
-          "필요 시 기계용도 설명서"
+          "관세 납부 안내 메일 또는 납부 영수증"
         ],
-        files: [
-          "customsReduction1",
-          "academicUse1",
-          "businessLicense",
-          "koamiRecommendationRequest",
-          "catalogExample",
-          "machinePurposeDescription",
-          "koamiFeeInvoice"
-        ],
+        files: ["businessLicense"],
         fileGroups: [
           {
-            title: "기본 통관 서류",
-            keys: ["customsReduction1", "academicUse1", "businessLicense"]
+            title: "해외구매 기본 서류",
+            keys: ["businessLicense"]
           }
         ],
         notes: [],
@@ -1287,35 +1306,32 @@
           {
             title: "관세 처리",
             items: [
+              "현재는 관세감면은 받지 않고, 개인 계좌로 관세를 먼저 납부한 뒤 랩비로 페이백 받는 방식으로 처리합니다.",
+              "FedEx, UPS, DHL 등에서 받은 관세 납부 안내 메일의 관세번호를 은행 앱 관세납부 메뉴에 입력해 납부합니다.",
+              "납부 영수증과 택배사 안내 메일은 정산 증빙으로 보관합니다."
+            ],
+            detailTitle: "예전 관세감면 절차 보기",
+            detailItems: [
               "구매 후 물품이 한국에 도착해 국제 택배회사(세관) 메일이 오면, 관세감면신청서(학교(박상연 선생님)를 통해서 발급 가능), 학술연구용 용도설명 및 확인서(학교(박상연 선생님)를 통해서 발급 가능), 사업자등록증 사본을 먼저 회신합니다.",
               "이 단계에서 관세감면이 바로 승인되면 국내제작곤란물품추천서는 따로 준비하지 않습니다.",
-              "추가로 추천서가 필요하다는 회신이 오면 아래 국내제작곤란 서류를 기계산업진흥회에 우편 제출합니다.",
-              "기계산업진흥회 심사비를 납부하면 국내제작곤란물품추천서를 받을 수 있습니다.",
-              "이후 세관에 학술감면 승인서, 용도설명서, 사업자등록증 사본, 국내제작곤란물품추천서를 보내면 세금감면이 진행됩니다.",
-              "관세감면을 진행하지 않는 경우에는 개인 계좌로 관세를 먼저 납부하고, 이후 랩비로 페이백 받습니다.",
-              "관세와 창고보관료를 납부하면 출고됩니다. 관세 납부는 보통 사비로 먼저 납부한 뒤 랩비로 지급받고, 은행 앱 관세납부에서 관세번호를 입력하면 됩니다."
-            ]
-          }
-        ],
-        afterFileSections: [
-          {
-            title: "국내제작곤란물품추천서가 필요한 경우",
-            items: [
-              "국제 택배회사나 통관 담당자 회신에서 추천서가 필요하다고 한 경우에만 진행합니다.",
+              "추가로 추천서가 필요하다는 회신이 오면 국내제작곤란 서류를 기계산업진흥회에 우편 제출합니다.",
               "관세감면 신청서 1부(학교(박상연 선생님)를 통해서 발급 가능): 구매운영팀 발급 후 연구지원팀을 통해 산학협력단장 직인을 받습니다.",
               "국내제작 곤란물품 확인추천신청서 2부(학교(박상연 선생님)를 통해서 발급 가능): 연구지원팀을 통해 산학협력단장 직인을 받습니다.",
               "카탈로그(또는 이에 준하는 서류) 1부: Mouser 제품이면 Mouser에서 내려받을 수 있고, 없으면 문의해서 메일로 받을 수 있습니다.",
               "기계용도 설명서를 함께 준비합니다.",
               "<a href=\"https://www.koami.or.kr/business/viewScholarship.do\" target=\"_blank\" rel=\"noopener\">한국기계산업진흥회 안내 페이지</a>",
               "위 서류를 모두 갖춘 뒤 기계산업진흥회에 우편으로 제출합니다.",
-              "이후 심사비를 납부하면 국내제작곤란물품추천서를 받을 수 있습니다."
+              "기계산업진흥회 심사비를 납부하면 국내제작곤란물품추천서를 받을 수 있습니다.",
+              "이후 세관에 학술감면 승인서, 용도설명서, 사업자등록증 사본, 국내제작곤란물품추천서를 보내면 세금감면이 진행됩니다.",
+              "관세와 창고보관료를 납부하면 출고됩니다."
             ],
-            fileGroup: {
+            detailFileGroup: {
               title: "국내제작곤란 관련 서류",
-              keys: ["koamiRecommendationRequest", "catalogExample", "machinePurposeDescription", "koamiFeeInvoice"]
+              keys: ["customsReduction1", "academicUse1", "koamiRecommendationRequest", "catalogExample", "machinePurposeDescription", "koamiFeeInvoice"]
             }
           }
         ],
+        afterFileSections: [],
         templateSuffix: "해외 구매 건으로 진행 예정입니다."
       };
     }
@@ -1419,6 +1435,7 @@
               <ul class="list">
                 ${section.items.map((item) => `<li>${item}</li>`).join("")}
               </ul>
+              ${sectionDetailHtml(section)}
             </section>
           `)
           .join("")}
